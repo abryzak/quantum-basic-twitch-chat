@@ -278,18 +278,22 @@ function esc_html(s) {
   return el.innerHTML;
 }
 
+function slugify(s) {
+  return s.replace(/[^0-9a-zA-Z]+/g, '-').toLowerCase();
+}
+
 function register_obs_scene_change_as_document_class() {
   const PREFIX = 'obs-scene-';
   let current = '';
   window.addEventListener('obsSceneChanged', event => {
-    let newClassName = PREFIX + event.detail.name;
+    let newClassName = slugify(PREFIX + event.detail.name);
     document.documentElement.classList.remove(current);
     document.documentElement.classList.add(newClassName);
     current = newClassName;
   });
   window.obsstudio.getCurrentScene(scene => {
     if (current) return; // assume this is an old callback and the scene already changed
-    current = PREFIX + scene.name;
+    current = slugify(PREFIX + scene.name);
     document.documentElement.classList.add(current);
   });
 }
